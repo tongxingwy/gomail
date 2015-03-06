@@ -122,8 +122,8 @@ func (msg *Message) SetReceiver(users string){
 }
 
 //Set email cc user
-func (msg *Message) SetCcUser(users string){
-	msg.setMulitUser("Cc",users)
+func (msg *Message) SetCcUser(addr string,username string){
+	msg.SetAddressHeader("Cc", addr, username)
 }
 
 // SetHeader sets a value to the given header field.
