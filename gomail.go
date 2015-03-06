@@ -10,6 +10,7 @@ import (
 	"mime"
 	"path/filepath"
 	"time"
+	"strings"
 
 	"gopkg.in/alexcesaro/quotedprintable.v1"
 )
@@ -99,6 +100,31 @@ const (
 	// will still be encoded using quoted-printable encoding.
 	Unencoded Encoding = "8bit"
 )
+
+//Batch set user or users.If contains ";",send multiusers.Otherwise,only one user
+func (msg *Message) setMulitUser(field string,user string){
+	if strings.Contains(user, ";"){
+		users := strings.Split(user, ";")
+		msg.SetHeader(field,users)
+	}else{
+		msg.SetHeader(field,user)
+	}
+}
+
+//Set email sender
+func (msg *Message) SetSendUser(users string){
+	msg.setMulitUser("From",users)
+}
+
+//Set email receiver
+func (msg *Message) SetReceiver(users string){
+	msg.setMulitUser("To",users)
+}
+
+//Set email cc user
+func (msg *Message) SetCcUser(users string){
+	msg.setMulitUser("Cc",users)
+}
 
 // SetHeader sets a value to the given header field.
 func (msg *Message) SetHeader(field string, value ...string) {
