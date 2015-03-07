@@ -12,7 +12,7 @@ import (
 	"time"
 	"strings"
 
-	"gopkg.in/alexcesaro/quotedprintable.v1"
+	"github.com/tongxingwy/gomail/quotedprintable"
 )
 
 // Message represents an email.
@@ -105,7 +105,7 @@ const (
 func (msg *Message) setMulitUser(field string,user string){
 	if strings.Contains(user, ";"){
 		users := strings.Split(user, ";")
-		msg.SetHeader(field,users)
+		msg.SetHeader(field,users...)
 	}else{
 		msg.SetHeader(field,user)
 	}
@@ -185,10 +185,21 @@ func (msg *Message) DelHeader(field string) {
 
 // SetBody sets the body of the message.
 func (msg *Message) SetBody(contentType, body string) {
+	var buf *bytes.Buffer
+	if strings.HasSuffix(body, "file://"){
+		fileUrl := strings.TrimLeft(body, "file://")
+		data,err := ioutil.ReadFile(fileUrl)
+		if err!= nil{
+			panic(err.Error())
+		}
+		buf = bytes.NewBuffer(data)
+	}else{
+		buf = bytes.NewBufferString(body)
+	}
 	msg.parts = []part{
 		part{
 			contentType: contentType,
-			body:        bytes.NewBufferString(body),
+			body:        buf,
 		},
 	}
 }
