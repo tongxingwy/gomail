@@ -186,7 +186,7 @@ func (msg *Message) DelHeader(field string) {
 // SetBody sets the body of the message.
 func (msg *Message) SetBody(contentType, body string) {
 	var buf *bytes.Buffer
-	if strings.HasSuffix(body, "file://"){
+	if strings.HasPrefix(body, "file://"){
 		fileUrl := strings.TrimLeft(body, "file://")
 		data,err := ioutil.ReadFile(fileUrl)
 		if err!= nil{
